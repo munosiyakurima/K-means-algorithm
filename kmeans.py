@@ -65,7 +65,7 @@ def main():
     centers = 5
     X_train, true_labels = make_blobs(n_samples=100, centers=centers, random_state=42)
     X_train = StandardScaler().fit_transform(X_train)
-    Fit centroids to dataset
+    #Fit centroids to dataset
     kmeans = KMeans(n_clusters=centers)
     kmeans.fit(X_train)
     # View results
