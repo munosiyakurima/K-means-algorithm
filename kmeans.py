@@ -62,8 +62,8 @@ class KMeans:
 def main(): 
 
     # Create a dataset of 2D distributions
-    centers = 8
-    X_train, true_labels = make_blobs(n_samples=200, centers=centers, random_state=42)
+    centers = 5
+    X_train, true_labels = make_blobs(n_samples=100, centers=centers, random_state=42)
     X_train = StandardScaler().fit_transform(X_train)
     # Fit centroids to dataset
     kmeans = KMeans(n_clusters=centers)
