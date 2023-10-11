@@ -61,28 +61,28 @@ class KMeans:
 
 def main(): 
 
-    # # Create a dataset of 2D distributions
-    # centers = 5
-    # X_train, true_labels = make_blobs(n_samples=100, centers=centers, random_state=42)
-    # X_train = StandardScaler().fit_transform(X_train)
-    # # Fit centroids to dataset
-    # kmeans = KMeans(n_clusters=centers)
-    # kmeans.fit(X_train)
-    # # View results
-    # class_centers, classification = kmeans.evaluate(X_train)
-    # sns.scatterplot(x=[X[0] for X in X_train],
-    #                 y=[X[1] for X in X_train],
-    #                 hue=true_labels,
-    #                 style=classification,
-    #                 palette="deep",
-    #                 legend=None
-    #                 )
-    # plt.plot([x for x, _ in kmeans.centroids],
-    #         [y for _, y in kmeans.centroids],
-    #         'k+',
-    #         markersize=10,
-    #         )
-    # plt.show()
+    # Create a dataset of 2D distributions
+    centers = 5
+    X_train, true_labels = make_blobs(n_samples=100, centers=centers, random_state=42)
+    X_train = StandardScaler().fit_transform(X_train)
+    # Fit centroids to dataset
+    kmeans = KMeans(n_clusters=centers)
+    kmeans.fit(X_train)
+    # View results
+    class_centers, classification = kmeans.evaluate(X_train)
+    sns.scatterplot(x=[X[0] for X in X_train],
+                    y=[X[1] for X in X_train],
+                    hue=true_labels,
+                    style=classification,
+                    palette="deep",
+                    legend=None
+                    )
+    plt.plot([x for x, _ in kmeans.centroids],
+            [y for _, y in kmeans.centroids],
+            'k+',
+            markersize=10,
+            )
+    plt.show()
 
 
     # Elbow plot
