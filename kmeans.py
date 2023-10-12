@@ -61,7 +61,7 @@ class KMeans:
 
 def main(): 
 
-    # Create a dataset of 2D distributions
+    #Create a dataset of 2D distributions
     centers = 5
     X_train, true_labels = make_blobs(n_samples=100, centers=centers, random_state=42)
     X_train = StandardScaler().fit_transform(X_train)
@@ -86,20 +86,23 @@ def main():
 
 
     # # Elbow plot
-    # wcss = []  # Within-Cluster Sum of Squares
-    # for k in range(1, 11):  # Trying different values of k
-    #     kmeans = KMeans(n_clusters=k)
-    #     kmeans.fit(X_train)
-    #     _, cluster_indices = kmeans.evaluate(X_train)
-    #     wcss.append(sum(euclidean(X_train[i], kmeans.centroids[cluster_indices[i]])**2 for i in range(len(X_train))))
+    centers = 5
+    X_train, true_labels = make_blobs(n_samples=100, centers=centers, random_state=42)
+    X_train = StandardScaler().fit_transform(X_train)
+    wcss = []  # Within-Cluster Sum of Squares
+    for k in range(1, 11):  # Trying different values of k
+        kmeans = KMeans(n_clusters=k)
+        kmeans.fit(X_train)
+        class_centers, classification = kmeans.evaluate(X_train)
+        wcss.append(sum(euclidean(X_train[i], kmeans.centroids[classification[i]])**2 for i in range(len(X_train))))
 
-    # plt.figure(figsize=(8, 5))
-    # plt.plot(range(1, 11), wcss, marker='o', linestyle='-', color='b')
-    # plt.title('Elbow Method')
-    # plt.xlabel('Number of Clusters (k)')
-    # plt.ylabel('Total Within-Cluster Sum of Squares')
-    # plt.grid()
-    # plt.show()
+    plt.figure(figsize=(8, 5))
+    plt.plot(range(1, 11), wcss, marker='o', linestyle='-', color='b')
+    plt.title('Elbow Method')
+    plt.xlabel('Number of Clusters (k)')
+    plt.ylabel('Total Within-Cluster Sum of Squares')
+    plt.grid()
+    plt.show()
 
 
 if __name__=="__main__": 
