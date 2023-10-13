@@ -17,6 +17,7 @@ def euclidean(point, data):
 
 
 class KMeans:
+    #Initializing the number of clusters you want and iterations you want
     def __init__(self, n_clusters=8, max_iter=300):
         self.n_clusters = n_clusters
         self.max_iter = max_iter
@@ -61,40 +62,42 @@ class KMeans:
 
 def main(): 
 
+    #This dummy data is what I am using now to test the algorithm. I am making use of the make_blobs function
+    # The function randomly makes data points and clusters them 
     #Create a dataset of 2D distributions
-    centers = 5
-    X_train, true_labels = make_blobs(n_samples=100, centers=centers, random_state=42)
-    X_train = StandardScaler().fit_transform(X_train)
-    #Fit centroids to dataset
-    kmeans = KMeans(n_clusters=centers)
-    kmeans.fit(X_train)
-    # View results
-    class_centers, classification = kmeans.evaluate(X_train)
-    sns.scatterplot(x=[X[0] for X in X_train],
-                    y=[X[1] for X in X_train],
-                    hue=true_labels,
-                    style=classification,
-                    palette="deep",
-                    legend=None
-                    )
-    plt.plot([x for x, _ in kmeans.centroids],
-            [y for _, y in kmeans.centroids],
-            'k+',
-            markersize=10,
-            )
-    plt.show()
+    # centers = 5
+    # X_train, true_labels = make_blobs(n_samples=100, centers=centers, random_state=42)
+    # X_train = StandardScaler().fit_transform(X_train)
+    # #Fit centroids to dataset
+    # kmeans = KMeans(n_clusters=centers)
+    # kmeans.fit(X_train)
+    # # View results
+    # class_centers, classification = kmeans.evaluate(X_train)
+    # sns.scatterplot(x=[X[0] for X in X_train],
+    #                 y=[X[1] for X in X_train],
+    #                 hue=true_labels,
+    #                 style=classification,
+    #                 palette="deep",
+    #                 legend=None
+    #                 )
+    # plt.plot([x for x, _ in kmeans.centroids],
+    #         [y for _, y in kmeans.centroids],
+    #         'k+',
+    #         markersize=10,
+    #         )
+    # plt.show()
 
 
     # # Elbow plot
-    centers = 5
-    X_train, true_labels = make_blobs(n_samples=100, centers=centers, random_state=42)
-    X_train = StandardScaler().fit_transform(X_train)
+    
     wcss = []  # Within-Cluster Sum of Squares
     for k in range(1, 11):  # Trying different values of k
+        X_train, true_labels = make_blobs(n_samples=100, centers=k, random_state=42)
+        X_train = StandardScaler().fit_transform(X_train)
         kmeans = KMeans(n_clusters=k)
         kmeans.fit(X_train)
-        class_centers, classification = kmeans.evaluate(X_train)
-        wcss.append(sum(euclidean(X_train[i], kmeans.centroids[classification[i]])**2 for i in range(len(X_train))))
+        _, cluster_indices = kmeans.evaluate(X_train)
+        wcss.append(sum(np.sum((X_train[i] - kmeans.centroids[cluster_indices[i]])**2) for i in range(len(X_train))))
 
     plt.figure(figsize=(8, 5))
     plt.plot(range(1, 11), wcss, marker='o', linestyle='-', color='b')
