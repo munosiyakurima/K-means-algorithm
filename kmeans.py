@@ -6,6 +6,8 @@ import pandas as pd
 from sklearn.datasets import make_blobs
 import seaborn as sns
 import random
+import csv
+
 
 
 
@@ -15,6 +17,13 @@ def euclidean(point, data):
     Point has dimensions (m,), data has dimensions (n,m), and output will be of size (n,).
     """
     return np.sqrt(np.sum((point - data)**2, axis=1))
+
+def save_cluster_assignments(X, assignments, filename='cluster_assgnments.csv'):
+    with open(filename, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['X1SES','stX1HHNUMBER', 'stX1PAREDU', 'Cluster'])
+        for x, assignment in zip(X, assignments):
+            writer.writerow([x[0], x[1], x[2], assignment])
 
 
 class KMeans:
@@ -67,47 +76,53 @@ def main():
     #I am using dummy data to test if the function works
     centers = 3 #Found using the elbow plot
     data = pd.read_csv('data1.csv', delimiter= ' ')
-    X_train = data[['X1PAREDU','X1SES']].values
+    X_train = data[['X1SES','stX1HHNUMBER', 'stX1PAREDU']].values
     #Fit centroids to dataset
     kmeans = KMeans(n_clusters=centers)
     kmeans.fit(X_train)
     # View results
     class_centers, classification = kmeans.evaluate(X_train)
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, projection='3d')
+    save_cluster_assignments(X_train, classification)
+    '''Plotting in 3d by using 3 Variables'''
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
 
-    # ax.scatter([X[0] for X in X_train],
-    #            [X[1] for X in X_train],
-    #            [X[2] for X in X_train],
-    #            c=classification,
-    #            cmap="coolwarm",
-    #            marker='o')
+    ax.scatter([X[0] for X in X_train],
+               [X[1] for X in X_train],
+               [X[2] for X in X_train],
+               c=classification,
+               cmap="coolwarm",
+               marker='o')
 
-    # ax.scatter([x for x, _, _ in kmeans.centroids],
-    #            [y for _, y, _ in kmeans.centroids],
-    #            [z for _, _, z in kmeans.centroids],
-    #            color='k',
-    #            marker='X',
-    #            s=100)
+    ax.scatter([x for x, _, _ in kmeans.centroids],
+               [y for _, y, _ in kmeans.centroids],
+               [z for _, _, z in kmeans.centroids],
+               color='k',
+               marker='X',
+               s=100)
 
-    # ax.set_xlabel('X1PAREDU')
-    # ax.set_ylabel('X1SES')
-    # ax.set_zlabel('X1POVERTY')
+    ax.set_xlabel('X1SES')
+    ax.set_ylabel('X1HHNUM')
+    ax.set_zlabel('X1PAREDU')
 
-    # plt.show()
-    sns.scatterplot(x=[X[0] for X in X_train],
-                    y=[X[1] for X in X_train],
-                    #hue= ,
-                    style=classification,
-                    palette="deep",
-                    legend=None
-                    )
-    plt.plot([x for x, _ in kmeans.centroids],
-            [y for _, y in kmeans.centroids],
-            'k+',
-            markersize=10,
-            )
     plt.show()
+
+    
+    
+    
+    # sns.scatterplot(x=[X[0] for X in X_train],
+    #                 y=[X[1] for X in X_train],
+    #                 #hue= ,
+    #                 style=classification,
+    #                 palette="deep",
+    #                 legend=None
+    #                 )
+    # plt.plot([x for x, _ in kmeans.centroids],
+    #         [y for _, y in kmeans.centroids],
+    #         'k+',
+    #         markersize=10,
+    #         )
+    # plt.show()
 
 
     '''Elbow plot
