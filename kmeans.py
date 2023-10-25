@@ -21,7 +21,7 @@ def euclidean(point, data):
 def save_cluster_assignments(X, assignments, filename='cluster_assignments.csv'):
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['X1SES','stX1HHNUMBER', 'stX1PAREDU', 'Cluster'])
+        writer.writerow(['stX1PAREDU', 'stX1SES', 'stINCOMEPERHHMEM', 'stS1HRACTIVITY', 'Cluster'])
         for x, assignment in zip(X, assignments):
             writer.writerow([x[0], x[1], x[2], assignment])
 
@@ -113,7 +113,7 @@ def main():
     # I am using dummy data to test if the function works
     centers = 3  # Found using the elbow plot
     data = pd.read_csv('data1.csv', delimiter=' ')
-    X_train = data[['X1SES', 'stX1HHNUMBER', 'stX1PAREDU', 'your_fourth_variable']].values
+    X_train = data[['stX1PAREDU', 'stX1SES', 'stINCOMEPERHHMEM', 'stS1HRACTIVITY']].values
 
     # Perform PCA to reduce the data to 3 principal components
     pca = PCA(n_components=3)
