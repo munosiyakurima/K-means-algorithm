@@ -23,12 +23,12 @@ def save_cluster_assignments(X, assignments, filename='cluster_assignments.csv')
         writer = csv.writer(csvfile)
         writer.writerow(['stX1PAREDU', 'stX1SES', 'stINCOMEPERHHMEM', 'stS1HRACTIVITY', 'Cluster'])
         for x, assignment in zip(X, assignments):
-            writer.writerow([x[0], x[1], x[2], assignment])
+            writer.writerow([x[0], x[1], x[2], x[3], assignment])
 
 
 class KMeans:
     #Initializing the number of clusters you want and iterations you want
-    def __init__(self, n_clusters=8, max_iter=300):
+    def __init__(self, n_clusters, max_iter=300):
         self.n_clusters = n_clusters
         self.max_iter = max_iter
     def fit(self, X_train):
@@ -111,72 +111,73 @@ def main():
     
     
     '''PCA'''
-    # # I am using dummy data to test if the function works
-    # centers = 6  # Found using the elbow plot
-    # data = pd.read_csv('data1.csv', delimiter=' ')
-    # X_train = data[['stX1PAREDU', 'stX1SES', 'stINCOMEPERHHMEM', 'stS1HRACTIVITY']].values
+    # I am using dummy data to test if the function works
+    centers = 5 # Found using the elbow plot
+    data = pd.read_csv('data1.csv', delimiter=' ')
+    X_train = data[['stX1PAREDU', 'stX1SES', 'stINCOMEPERHHMEM', 'stS1HRACTIVITY']].values
 
-    # # Perform PCA to reduce the data to 3 principal components
-    # pca = PCA(n_components=2)
-    # X_reduced = pca.fit_transform(X_train)
+    # Perform PCA to reduce the data to 2 principal components
+    pca = PCA(n_components=2)
+    X_reduced = pca.fit_transform(X_train)
 
-    # # Fit centroids to the reduced dataset
-    # kmeans = KMeans(n_clusters=centers)
-    # kmeans.fit(X_reduced)
+    # Fit centroids to the reduced dataset
+    kmeans = KMeans(n_clusters=centers)
+    kmeans.fit(X_reduced)
 
-    # # View results
-    # class_centers, classification = kmeans.evaluate(X_reduced)
-    # save_cluster_assignments(X_train, classification)
+    # View results
+    class_centers, classification = kmeans.evaluate(X_reduced)
+    save_cluster_assignments(X_train, classification)
 
-    # # Plotting in 3D using the first 3 Principal Components
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, projection='3d')
+    # Plotting in 2D using the first 2 Principal Components
+    plt.figure(figsize=(8, 6))
 
-    # ax.scatter(X_reduced[:, 0], X_reduced[:, 1],
-    #            c=classification,
-    #            cmap="coolwarm",
-    #            marker='o')
+    # Plot data points
+    plt.scatter(X_reduced[:, 0], X_reduced[:, 1], c=classification, cmap="coolwarm", marker='o', edgecolor='black')
 
-    # centroids_3d = pca.transform(np.array(kmeans.centroids))  # Transform centroids to 3D
-    # ax.scatter(centroids_3d[:, 0], centroids_3d[:, 1],
-    #            color='k',
-    #            marker='X',
-    #            s=100)
+    # Plot centroids
+    centroids_2d = np.array(kmeans.centroids)  # No need for pca.transform here
 
-    # ax.set_xlabel('Principal Component 1')
-    # ax.set_ylabel('Principal Component 2')
-    
+    # Ensure the number of features in the centroids matches the original dataset
+    centroids_2d = centroids_2d[:, :X_train.shape[1]]  # Adjust the number of features if necessary
 
-    # plt.show()
+    plt.scatter(centroids_2d[:, 0], centroids_2d[:, 1], color='black', marker='X', s=100, label='Centroids')
+
+    plt.xlabel('Principal Component 1')
+    plt.ylabel('Principal Component 2')
+    plt.title('K-Means Clustering in 2D')
+
+    plt.legend()
+    plt.show()
+
 
 
     '''Elbow plot
     Commented out for now as I used it to find how many centers I need already'''
 
-    data = pd.read_csv('data1.csv', delimiter= ' ')
-    wcss = []  # Within-Cluster Sum of Squares
-    for k in range(1, 11):  # Trying different values of k
-        X_train = data[['stX1PAREDU', 'stX1SES', 'stINCOMEPERHHMEM', 'stS1HRACTIVITY']].values
+    # data = pd.read_csv('data1.csv', delimiter= ' ')
+    # wcss = []  # Within-Cluster Sum of Squares
+    # for k in range(1, 11):  # Trying different values of k
+    #     X_train = data[['stX1PAREDU', 'stX1SES', 'stINCOMEPERHHMEM', 'stS1HRACTIVITY']].values
 
-        # Perform PCA to reduce the data to 3 principal components
-        pca = PCA(n_components=2)
-        X_reduced = pca.fit_transform(X_train)
+    #     # Perform PCA to reduce the data to 3 principal components
+    #     pca = PCA(n_components=2)
+    #     X_reduced = pca.fit_transform(X_train)
 
-        # Fit centroids to the reduced dataset
-        kmeans = KMeans(n_clusters=k)
-        kmeans.fit(X_reduced)
+    #     # Fit centroids to the reduced dataset
+    #     kmeans = KMeans(n_clusters=k)
+    #     kmeans.fit(X_reduced)
 
-        # View results
-        class_centers, classification = kmeans.evaluate(X_reduced)
-        wcss.append(sum(np.sum((X_reduced[i] - kmeans.centroids[classification[i]])**2) for i in range(len(X_reduced))))
+    #     # View results
+    #     class_centers, classification = kmeans.evaluate(X_reduced)
+    #     wcss.append(sum(np.sum((X_reduced[i] - kmeans.centroids[classification[i]])**2) for i in range(len(X_reduced))))
 
-    plt.figure(figsize=(8, 5))
-    plt.plot(range(1, 11), wcss, marker='o', linestyle='-', color='b')
-    plt.title('Elbow Method')
-    plt.xlabel('Number of Clusters (k)')
-    plt.ylabel('Total Within-Cluster Sum of Squares')
-    plt.grid()
-    plt.show()
+    # plt.figure(figsize=(8, 5))
+    # plt.plot(range(1, 11), wcss, marker='o', linestyle='-', color='b')
+    # plt.title('Elbow Method')
+    # plt.xlabel('Number of Clusters (k)')
+    # plt.ylabel('Total Within-Cluster Sum of Squares')
+    # plt.grid()
+    # plt.show()
 
 
 if __name__=="__main__": 
